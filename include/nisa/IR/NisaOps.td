@@ -9,7 +9,7 @@
 #ifndef NISA_OPS
 #define NISA_OPS
 
-include "nisa/NisaTypes.td"
+include "nisa/IR/Nisa.td"
 include "mlir/Interfaces/InferTypeOpInterface.td"
 include "mlir/Interfaces/SideEffectInterfaces.td"
 

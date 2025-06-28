@@ -12,7 +12,7 @@
 #include "mlir/Support/FileUtilities.h"
 #include "mlir/Tools/mlir-opt/MlirOptMain.h"
 
-#include "nisa/NisaDialect.h"
+#include "nisa/IR/NisaDialect.h"
 
 int main(int argc, char **argv) {
   mlir::registerAllPasses();

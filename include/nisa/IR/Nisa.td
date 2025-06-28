@@ -10,6 +10,8 @@
 #define NISA_DIALECT
 
 include "mlir/IR/OpBase.td"
+include "mlir/IR/EnumAttr.td"
+
 
 //===----------------------------------------------------------------------===//
 // Nisa dialect definition.
@@ -17,18 +19,27 @@ include "mlir/IR/OpBase.td"
 
 def Nisa_Dialect : Dialect {
     let name = "nisa";
-    let summary = "A nisa out-of-tree MLIR dialect.";
+    let summary = "A MLIR dialect for nki.isa.";
     let description = [{
-        This dialect is an example of an out-of-tree MLIR dialect designed to
-        illustrate the basic setup required to develop MLIR-based tools without
-        working inside of the LLVM source tree.
+        MLIR dialect to represent the instruction set of AWS Trainium architecture.
     }];
     let cppNamespace = "::mlir::nisa";
 
     let useDefaultTypePrinterParser = 1;
-    let extraClassDeclaration = [{
-        void registerTypes();
-    }];
+}
+
+
+//===----------------------------------------------------------------------===//
+// Nisa Attribute Definitions
+//===----------------------------------------------------------------------===//
+
+def MemSpacePSum : I32EnumAttrCase<"MEM_PSUM", 0, "psum">;
+def MemSpaceSBuf  : I32EnumAttrCase<"MEM_SBUF", 1, "sbuf">;
+def MemSpaceHbm  : I32EnumAttrCase<"MEM_HBM", 2, "hbm">;
+def MemSpaceKind : I32EnumAttr<"MemSpaceKind", "Memory space",
+  [ MemSpacePSum, MemSpaceSBuf, MemSpaceHbm ]> {
+  let genSpecializedAttr = 0;
+  let cppNamespace = "::mlir::nisa";
 }
 
 //===----------------------------------------------------------------------===//

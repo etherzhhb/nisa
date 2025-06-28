@@ -5,7 +5,7 @@ set(LIBS
         ${conversion_libs}
         MLIRArithDialect
         MLIROptLib
-        MLIRNisa
+        MLIRNisaIR
         )
 add_llvm_executable(nisa-opt nisa-opt.cpp)
 

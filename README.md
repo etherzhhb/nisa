@@ -1,32 +1,23 @@
 # An out-of-tree MLIR dialect
 
-This is an example of an out-of-tree [MLIR](https://mlir.llvm.org/) dialect along with a nisa `opt`-like tool to operate on that dialect.
 
-## Building - Component Build
-
-This setup assumes that you have built LLVM and MLIR in `$BUILD_DIR` and installed them to `$PREFIX`. To build and launch the tests, run
 ```sh
-mkdir build && cd build
-cmake -G Ninja .. -DMLIR_DIR=$PREFIX/lib/cmake/mlir -DLLVM_EXTERNAL_LIT=$BUILD_DIR/bin/llvm-lit
-cmake --build . --target check-nisa
-```
-To build the documentation from the TableGen description of the dialect operations, run
-```sh
-cmake --build . --target mlir-doc
-```
-**Note**: Make sure to pass `-DLLVM_INSTALL_UTILS=ON` when building LLVM with CMake in order to install `FileCheck` to the chosen installation prefix.
+# llvm build like this
 
-## Building - Monolithic Build
+cmake -G Ninja ../llvm \
+  -DLLVM_ENABLE_PROJECTS="mlir;clang;clang-tools-extra" \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DLLVM_ENABLE_RTTI=ON \
+  -DBUILD_SHARED_LIBS=ON \
+  -DMLIR_ENABLE_BINDINGS_PYTHON=ON \
+  -DLLVM_INCLUDE_TESTS=ON \
+  -DLLVM_INSTALL_UTILS=ON \
+  -DPython3_EXECUTABLE=$(which python3) \
+  -DLLVM_TARGETS_TO_BUILD=host \
+  -DCMAKE_INSTALL_PREFIX=$HOME/llvm-install
 
-This setup assumes that you build the project as part of a monolithic LLVM build via the `LLVM_EXTERNAL_PROJECTS` mechanism.
-To build LLVM, MLIR, the example and launch the tests run
-```sh
-mkdir build && cd build
-cmake -G Ninja `$LLVM_SRC_DIR/llvm` \
-    -DCMAKE_BUILD_TYPE=Release \
-    -DLLVM_TARGETS_TO_BUILD=host \
-    -DLLVM_ENABLE_PROJECTS=mlir \
-    -DLLVM_EXTERNAL_PROJECTS=nisa-dialect -DLLVM_EXTERNAL_NISA_DIALECT_SOURCE_DIR=../
-cmake --build . --target check-nisa
+
+# nisa build like this
+cmake -G Ninja ..  -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_PREFIX_PATH=$HOME/llvm-install
 ```
 Here, `$LLVM_SRC_DIR` needs to point to the root of the monorepo.
