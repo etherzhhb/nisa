@@ -10,34 +10,35 @@
 #define NISA_OPS
 
 include "nisa/IR/Nisa.td"
+include "nisa/IR/NisaTypes.td"
 include "mlir/Interfaces/InferTypeOpInterface.td"
 include "mlir/Interfaces/SideEffectInterfaces.td"
 
-def Nisa_FooOp : Nisa_Op<"foo", [Pure,
-                                             SameOperandsAndResultType]> {
-    let summary = "Illustrates how to define an operation.";
-    let description = [{
-        The `nisa.foo` operation illustrates how to define a new
-        operation in a dialect. It uses an operation trait to declare that it
-        has no side effects.
+def DmaCopy : Nisa_Op<"dma_copy", [AttrSizedOperandSegments]> {
+  let summary = "Copy data from `src` to `dst` using DMA engine.";
+  let description = [{
+      Copy data from `src` to `dst` using DMA engine.
+      Both `src` and `dst` tiles can be in device memory (HBM) or SBUF.
+      However, if both src and dst tiles are in SBUF,
+      consider using nisa.tensor_copy instead for better performance.
+  }];
 
-        This operation takes an integer argument and returns an integer.
 
-        Example:
+  let arguments = (ins Arg<MemLocType, "the memloc to copy from",
+                           [MemReadAt<0, FullEffect>]>:$src_memloc,
+                       Variadic<Index>:$src_indices,
+                       AffineMapAttr:$src_ap,
 
-        ```mlir
-        %0 = arith.constant 2 : i32
-        // Apply the foo operation to %0
-        %1 = nisa.foo %0 : i32
-        ```
-    }];
+                       Arg<MemLocType, "the memloc to copy to",
+                           [MemWriteAt<0, FullEffect>]>:$dst_memloc,
+                       Variadic<Index>:$dst_indices,
+                       AffineMapAttr:$dst_ap
+                  );
 
-    let arguments = (ins I32:$input);
-    let results = (outs I32:$res);
-
-    let assemblyFormat = [{
-        $input attr-dict `:` type($input)
-    }];
+  let assemblyFormat = [{
+    $src_memloc `[` $src_indices `]` `,` $dst_memloc `[` $dst_indices `]` attr-dict `:` type($src_memloc) `to` type($dst_memloc)
+  }];
 }
+
 
 #endif // NISA_OPS

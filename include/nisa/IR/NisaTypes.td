@@ -11,7 +11,7 @@ class Nisa_Type<string name, string typeMnemonic, list<Trait> traits = []>
 
 
 // Your custom memref-like type
-def Nisa_MemLocType : Nisa_Type<"MemLoc", "memloc"> {
+def MemLocType : Nisa_Type<"MemLoc", "memloc"> {
   let summary = "Nisa buffer reference type with address space";
   let description = [{
     Similar to MLIR MemRefType: has shape, element type,
